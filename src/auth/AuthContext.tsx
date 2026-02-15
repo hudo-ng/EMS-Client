@@ -1,40 +1,41 @@
 import { createContext, useState, useEffect } from "react";
 
 interface AuthContextType {
-    token: string | null;
-    login: (token: string) => void;
-    logout: () => void;
+  token: string | null;
+  login: (token: string) => void;
+  logout: () => void;
 }
 
 export const AuthContext = createContext<AuthContextType>({
-    token: null,
-    login: () => { },
-    logout: () => { },
+  token: null,
+  login: () => {},
+  logout: () => {},
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const [token, setToken] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
-    useEffect(() => {
-        const storedToken = localStorage.getItem("token");
-        if (storedToken) {
-            setToken(storedToken);
-        }
-    }, []);
-
-    const login = (newToken: string) => {
-        setToken(newToken);
-        localStorage.setItem("token", newToken);
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      setToken(storedToken);
     }
+  }, []);
 
-    const logout = () => {
-        setToken(null);
-        localStorage.removeItem("token");
-    }
+  const login = (newToken: string) => {
+    setToken(newToken);
+    localStorage.setItem("token", newToken);
+  };
 
-    return(
-        <AuthContext.Provider value={{ token, login, logout }}>
-            {children}
-        </AuthContext.Provider>
-    )
+  const logout = () => {
+    setToken(null);
+    localStorage.removeItem("token");
+    window.location.href = "/login";
+  };
+
+  return (
+    <AuthContext.Provider value={{ token, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
